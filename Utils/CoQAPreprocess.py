@@ -4,20 +4,23 @@
 """
     This file takes a CoQA data file as input and generates the input files for training the QA model.
 """
+from collections import Counter
 import json
-import msgpack
 import multiprocessing
+import os
 import re
 import string
+from typing import Any, Optional
+
+import msgpack
 import torch
 from tqdm import tqdm
-from collections import Counter
+
 from Utils.GeneralUtils import nlp, load_glove_vocab, pre_proc
 from Utils.CoQAUtils import token2id, token2id_sent, char2id_sent, build_embedding, feature_gen, POS, ENT
-import os
 
 class CoQAPreprocess():
-    def __init__(self, opt):
+    def __init__(self, opt: dict[str, Any]):
         print('CoQA Preprocessing')
         self.opt = opt
         self.spacyDir = opt['FEATURE_FOLDER']
@@ -55,7 +58,7 @@ class CoQAPreprocess():
             self.preprocess(dataset_label)
 
     # dataset_label can be 'train' or 'dev' or 'test'
-    def preprocess(self, dataset_label):
+    def preprocess(self, dataset_label: str) -> Optional[Any]:
         file_name = self.train_file if dataset_label == 'train' else (self.dev_file if dataset_label == 'dev' else self.test_file)
         output_file_name = os.path.join(self.spacyDir, self.data_prefix + dataset_label + '-preprocessed.json')
 
@@ -169,7 +172,7 @@ class CoQAPreprocess():
             meta_file_name = os.path.join(self.spacyDir, dataset_label + '_meta.msgpack')
             print('Saving meta information to', meta_file_name)
             with open(meta_file_name, 'wb') as f:
-                msgpack.dump(meta, f, encoding='utf8')
+                msgpack.dump(meta, f)
 
         dataset['data'] = data
 
@@ -182,11 +185,11 @@ class CoQAPreprocess():
     '''
      Return train_vocab embedding
     '''
-    def load_data(self):
+    def load_data(self) -> tuple[Any, Any, torch.Tensor]:
         print('Load train_meta.msgpack...')
         meta_file_name = os.path.join(self.spacyDir, 'train_meta.msgpack')
         with open(meta_file_name, 'rb') as f:
-            meta = msgpack.load(f, encoding='utf8')
+            meta: Any = msgpack.load(f)
         embedding = torch.Tensor(meta['embedding'])
         self.opt['vocab_size'] = embedding.size(0)
         self.opt['vocab_dim'] = embedding.size(1)
@@ -238,7 +241,7 @@ class CoQAPreprocess():
             s = '}'
         return s
 
-    def process(self, parsed_text):
+    def process(self, parsed_text: list[str]):
         output = {'word': [],
                   'lemma': [],
                   'pos': [],
@@ -274,7 +277,7 @@ class CoQAPreprocess():
      offsets based on raw_text
      this will solve the problem that, in raw_text, it's "a-b", in parsed test, it's "a - b"
     '''
-    def get_raw_context_offsets(self, words, raw_text):
+    def get_raw_context_offsets(self, words: list[str], raw_text: str) -> list[tuple[int, int]]:
         raw_context_offsets = []
         p = 0
         for token in words:            
@@ -288,7 +291,7 @@ class CoQAPreprocess():
 
         return raw_context_offsets
 
-    def normalize_answer(self, s):
+    def normalize_answer(self, s: str) -> str:
         """Lower text and remove punctuation, storys and extra whitespace."""
 
         def remove_articles(text):
@@ -309,7 +312,7 @@ class CoQAPreprocess():
 
 
     # find the word id start and stop
-    def find_span_with_gt(self, context, offsets, ground_truth):
+    def find_span_with_gt(self, context: str, offsets: list[tuple[int, int]], ground_truth: str) -> tuple[int, int]:
         best_f1 = 0.0
         best_span = (len(offsets) - 1, len(offsets) - 1)
         gt = self.normalize_answer(pre_proc(ground_truth)).split()
@@ -332,7 +335,7 @@ class CoQAPreprocess():
 
 
     # find the word id start and stop
-    def find_span(self, offsets, start, end):
+    def find_span(self, offsets: list[tuple[int, int]], start: int, end: int) -> tuple[int, int]:
         start_index = -1
         end_index = -1
         for i, offset in enumerate(offsets):
