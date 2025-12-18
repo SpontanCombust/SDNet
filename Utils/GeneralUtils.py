@@ -10,7 +10,7 @@ import torch.nn.functional as F
 import unicodedata
 import sys
 from torch.autograd import Variable
-nlp = spacy.load('en', parser = False)
+nlp = spacy.load("en_core_web_sm")
 
 # normalize sentence
 def normalize_text(text):
