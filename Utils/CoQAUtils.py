@@ -314,10 +314,10 @@ class BatchGen:
                     query_bert[i, :len(q_bert_list[i])] = torch.LongTensor(q_bert_list[i])
                     query_bert_mask[i, :len(q_bert_list[i])] = 1
                 if self.use_cuda:
-                    x_bert = Variable(x_bert.cuda(async=True))
-                    x_bert_mask = Variable(x_bert_mask.cuda(async=True))
-                    query_bert = Variable(query_bert.cuda(async=True))
-                    query_bert_mask = Variable(query_bert_mask.cuda(async=True))
+                    x_bert = Variable(x_bert.cuda(non_blocking=True))
+                    x_bert_mask = Variable(x_bert_mask.cuda(non_blocking=True))
+                    query_bert = Variable(query_bert.cuda(non_blocking=True))
+                    query_bert_mask = Variable(query_bert_mask.cuda(non_blocking=True))
                 else:
                     x_bert = Variable(x_bert)
                     x_bert_mask = Variable(x_bert_mask)
@@ -335,10 +335,10 @@ class BatchGen:
                 x_char_mask = 1 - torch.eq(x_char, 0)
                 query_char_mask = 1 - torch.eq(query_char, 0)
                 if self.use_cuda:
-                    x_char = Variable(x_char.cuda(async=True))
-                    x_char_mask = Variable(x_char_mask.cuda(async=True))
-                    query_char = Variable(query_char.cuda(async=True))
-                    query_char_mask = Variable(query_char_mask.cuda(async=True))
+                    x_char = Variable(x_char.cuda(non_blocking=True))
+                    x_char_mask = Variable(x_char_mask.cuda(non_blocking=True))
+                    query_char = Variable(query_char.cuda(non_blocking=True))
+                    query_char_mask = Variable(query_char_mask.cuda(non_blocking=True))
                 else:
                     x_char = Variable(x_char)
                     x_char_mask = Variable(x_char_mask)
@@ -353,14 +353,14 @@ class BatchGen:
             x_mask = 1 - torch.eq(x, 0)
             query_mask = 1 - torch.eq(query, 0)
             if self.use_cuda:
-                x = Variable(x.cuda(async=True))
-                x_mask = Variable(x_mask.cuda(async=True))                
-                x_features = Variable(x_features.cuda(async=True))
-                x_pos = Variable(x_pos.cuda(async=True))
-                x_ent = Variable(x_ent.cuda(async=True))
-                query = Variable(query.cuda(async=True))
-                query_mask = Variable(query_mask.cuda(async=True))                
-                ground_truth = Variable(ground_truth.cuda(async=True))
+                x = Variable(x.cuda(non_blocking=True))
+                x_mask = Variable(x_mask.cuda(non_blocking=True))                
+                x_features = Variable(x_features.cuda(non_blocking=True))
+                x_pos = Variable(x_pos.cuda(non_blocking=True))
+                x_ent = Variable(x_ent.cuda(non_blocking=True))
+                query = Variable(query.cuda(non_blocking=True))
+                query_mask = Variable(query_mask.cuda(non_blocking=True))                
+                ground_truth = Variable(ground_truth.cuda(non_blocking=True))
             else:
                 x = Variable(x)
                 x_mask = Variable(x_mask)                

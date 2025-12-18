@@ -69,7 +69,7 @@ def removeInvalidChar(sentence):
 def makeVariable(x, use_cuda):
     if use_cuda:
         x = x.pin_memory()
-        return Variable(x.cuda(async = True), requires_grad = False)
+        return Variable(x.cuda(non_blocking=True), requires_grad = False)
     else:
         return Variable(x, requires_grad = False)
 
