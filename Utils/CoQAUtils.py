@@ -332,8 +332,8 @@ class BatchGen:
                 query_bert_offsets = None
 
             if self.use_char_cnn:
-                x_char_mask = 1 - torch.eq(x_char, 0)
-                query_char_mask = 1 - torch.eq(query_char, 0)
+                x_char_mask = ~torch.eq(x_char, 0)
+                query_char_mask = ~torch.eq(query_char, 0)
                 if self.use_cuda:
                     x_char = Variable(x_char.cuda(non_blocking=True))
                     x_char_mask = Variable(x_char_mask.cuda(non_blocking=True))
@@ -350,8 +350,8 @@ class BatchGen:
                 query_char = None                               
                 query_char_mask = None                               
 
-            x_mask = 1 - torch.eq(x, 0)
-            query_mask = 1 - torch.eq(query, 0)
+            x_mask = ~torch.eq(x, 0)
+            query_mask = ~torch.eq(query, 0)
             if self.use_cuda:
                 x = Variable(x.cuda(non_blocking=True))
                 x_mask = Variable(x_mask.cuda(non_blocking=True))                

@@ -7,7 +7,7 @@ requires-python = ">=3.9"
 dependencies = [
     "msgpack",
     "pandas>=0.25",
-    "torch",
+    "torch==2.8.0",
     "tqdm",
     "spacy>=2.0, <3.0",
     "numpy>=1.0, <2.0"

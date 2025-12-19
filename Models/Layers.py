@@ -270,7 +270,7 @@ class Attention(nn.Module):
 
         if drop_diagonal:
             assert(scores.size(1) == scores.size(2))
-            diag_mask = torch.diag(scores.data.new(scores.size(1)).zero_() + 1).byte().unsqueeze(0).expand_as(scores)
+            diag_mask = torch.diag(scores.data.new(scores.size(1)).zero_() + 1).bool().unsqueeze(0).expand_as(scores)
             scores.data.masked_fill_(diag_mask, -float('inf'))
 
         # softmax
